@@ -13,9 +13,9 @@ Deaf or hearing-impaired individuals have been facing problems in communicating 
 - Download all codes and save in a directory/folder
 - Download the dataset from https://www.kaggle.com/datasets/japorton/fsl-dataset?resource=download (filename: _archive.zip_) in the same directory
 - Extract the folder in the zip file (foldername: _Collated_) and move in the directory
-- Run the rename_dataset.py file to rename the dataset filenames. You should expect a new folder named _FSL_images_ containing subfolders with images
+- Run the [rename_dataset.py](BreadcrumbsFSLAlphabetRecognition-PHCA/rename_dataset.py) file to rename the dataset filenames. You should expect a new folder named _FSL_images_ containing subfolders with images
 - Compress the new folder into a zip file (filename: _FSL_images_static.zip_)
 
 ### Main Implementation
-- Create a virtual environment and install all dependencies from requirements.txt file (**Important**: make sure to use Python version (>3.7, <=3.10.10) so that the _ripser_ package will work)
+- Create a virtual environment and install all dependencies from requirements.txt file (**Important Note**: Make sure to use Python version (>3.7, <=3.10.10) so that the _ripser_ package will work)
 - Run the _main.py_ file
