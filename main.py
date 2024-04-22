@@ -8,7 +8,7 @@ from modules import FilipinoSignLanguage, Image2Landmarks, PHCA, kfoldDivideData
 classes = 24  # static
 zip_path = 'FSL_images_static.zip'
 metrics = ['precision', 'recall', 'f1-score', 'specificity', 'support', 'accuracy']
-collect_data = False  # True when landmarks data are still not extracted
+collect_data = True  # True when landmarks data are still not extracted
 save_results = True
 
 
