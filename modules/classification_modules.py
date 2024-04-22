@@ -103,29 +103,6 @@ def classification_report_with_specificity(predicted_labels):
     report[key]['weighted avg']['specificity'] = avg/len(specificity)
     return report
 
-def plot_metrics(predicted_labels, true_labels, measurements, ax=None):
-  colors = ['#3a2f6b','#36669c','#41a0ae','#3ec995','#77f07f']
-  report = classification_report(true_labels, predicted_labels, output_dict=True)
-  labels = np.unique(true_labels)
-  metric_values = []
-  metrics = measurements.copy()
-  metrics.remove('support')
-  specificity = get_specificity(confusion_matrix(true_labels, predicted_labels, labels=labels), labels)
-  for metric in metrics:
-    if metric == 'accuracy':
-      value = report[metric]
-    elif metric == 'specificity':
-      value = np.mean([specificity[clss] for clss in labels])
-    else:
-      value = np.mean([report[clss][metric] for clss in labels])
-    metric_values.append(value)
-
-  # plotting
-  ax = ax or plt.gca()
-  b = ax.bar(np.arange(len(metric_values)), metric_values, color=colors)
-  ax.bar_label(b, fmt='%.2f', label_type='center')
-  ax.set_xticks(np.arange(len(metrics)), metrics, rotation='vertical')
-
 def plot_metrics_per_metric(predicted_labels:dict, metric:str, save:bool=False, ax=None):
     colors = ['#334085','#286c8b','#1ba394','#17a88c','#0eda9b', '#68f0c0']
     report = classification_report_with_specificity(predicted_labels)
@@ -152,34 +129,6 @@ def plot_metrics_per_metric(predicted_labels:dict, metric:str, save:bool=False, 
     sns.despine()
     if save:
         plt.savefig(f'final_results/result_{metric}.png')
-
-def plot_predictions(y_pred, y_test, test_ind, num_images, landmarks:bool, title, img_paths):
-  if title == 'Correct':
-    indices = test_ind[np.nonzero(y_pred == y_test)[0]]
-  else:
-    indices = test_ind[np.nonzero(y_pred != y_test)[0]]
-  num_axs = int(np.sqrt(num_images))
-
-
-  plt.figure(figsize=(10,10))
-  for i, correct, in enumerate(indices[:num_images]):
-    plt.subplot(num_axs, num_axs, i+1)
-    if title == "Correct":
-      pred_ind = np.nonzero(y_pred == y_test)[0][i]
-    else:
-      pred_ind = np.nonzero(y_pred != y_test)[0][i]
-
-    if landmarks:
-      img2landmarks = Image2Landmarks(flatten=False, display_image=True)
-      _ = img2landmarks.image_to_hand_landmarks(img_paths[correct])
-    else:
-      img = cv2.imread(img_paths[correct])
-      plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
-    plt.title(f"Predicted {y_pred[pred_ind]}, Class {y_test[pred_ind]}")
-    plt.axis('off')
-  plt.suptitle(f'{title} Predictions')
-  plt.tight_layout()
-  plt.show()
 
 def nemenyi_test(predicted_labels, metrics, alpha=0.05):
     report = classification_report_with_specificity(predicted_labels)
