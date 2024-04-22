@@ -53,11 +53,3 @@ def extract_landmarks(results, flattened:bool):
         if flattened:
             hand_landmarks = hand_landmarks.flatten()
     return hand_landmarks
-
-def normalize_landmarks(FSLData):
-    FSLData_normalized = (FSLData.copy()).reshape(-1,21,3)
-    for idx, data in enumerate(FSLData):
-        data = data.reshape(21,3)
-        first_row = np.array(data[0].copy())
-        FSLData_normalized[idx] = [np.abs(first_row - np.array(data[i])).tolist() for i in range(len(data))]
-    return FSLData_normalized.reshape(-1, 21*3)
