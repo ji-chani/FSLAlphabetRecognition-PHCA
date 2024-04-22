@@ -1,0 +1,11 @@
+numpy
+matplotlib
+scipy
+scikit-learn
+scikit-posthocs
+statsmodels
+seaborn
+tqdm
+ripser
+mediapipe
+opencv-python
