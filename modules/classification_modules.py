@@ -41,8 +41,12 @@ def kfoldDivideData(FSLData, FSLTarget, folds=5):
         fivefoldData[f], fivefoldTarget[f] = shuffle(fivefoldData[f], fivefoldTarget[f], random_state=np.random.randint(folds))
     return fivefoldData, fivefoldTarget
 
-def balance_data(dataset):
+def prepared_data(dataset:dict, balanced:bool=True, random_state:int=None):
+    """Returns dataset with `balanced=True` or `balanced=False` number of instances per class."""
+    
+    np.random.seed(random_state)
     balanced_dataset = {'data': [], 'target': [], 'path': []}
+    
     # removing None data values
     rem_idx = []
     for idx, data in enumerate(dataset['data']):
@@ -55,17 +59,20 @@ def balance_data(dataset):
         dataset['target'].pop(idx)
         dataset['path'].pop(idx)
 
-    # balancing num of data per class according to minimum
-    classes = np.unique(dataset['target'])
-    numdata_per_class = min([len(np.where(np.array(dataset['target']) == c)[0]) for c in classes])
-    keep_idx = []
-    for c in classes:
-        keep = np.where(np.array(dataset['target']) == c)[0][:numdata_per_class]
-        keep_idx.extend(keep)
-    balanced_dataset['data'] = [dataset['data'][idx] for idx in keep_idx]
-    balanced_dataset['target'] = [dataset['target'][idx] for idx in keep_idx]
-    balanced_dataset['path'] = [dataset['path'][idx] for idx in keep_idx]
-    return np.array(balanced_dataset['data']), np.array(balanced_dataset['target']), np.array(balanced_dataset['path'])
+    if balanced: # balancing num of data per class according to minimum (313 instances)
+        classes = np.unique(dataset['target'])
+        numdata_per_class = min([len(np.where(np.array(dataset['target']) == c)[0]) for c in classes])
+        keep_idx = []
+        for c in classes: # randomly selects indices
+            clss_indices = np.where(np.array(dataset['target']) == c)[0]
+            keep = np.random.choice(clss_indices, size=numdata_per_class, replace=False)
+            keep_idx.extend(np.sort(keep))
+        balanced_dataset['data'] = [dataset['data'][idx] for idx in keep_idx]
+        balanced_dataset['target'] = [dataset['target'][idx] for idx in keep_idx]
+        balanced_dataset['path'] = [dataset['path'][idx] for idx in keep_idx]
+        return np.array(balanced_dataset['data']), np.array(balanced_dataset['target']), np.array(balanced_dataset['path'])
+    else:
+        return np.array(dataset['data']), np.array(dataset['target']), np.array(dataset['path'])
 
 def get_specificity(confusionMatrix, classes):
     label_lists = classes
@@ -103,7 +110,7 @@ def classification_report_with_specificity(predicted_labels):
     report[key]['weighted avg']['specificity'] = avg/len(specificity)
     return report
 
-def plot_metrics(predicted_labels, true_labels, measurements, ax=None):
+def plot_metrics(predicted_labels, true_labels, measurements, ax=None, title=None):
   colors = ['#3a2f6b','#36669c','#41a0ae','#3ec995','#77f07f']
   report = classification_report(true_labels, predicted_labels, output_dict=True)
   labels = np.unique(true_labels)
@@ -123,8 +130,10 @@ def plot_metrics(predicted_labels, true_labels, measurements, ax=None):
   # plotting
   ax = ax or plt.gca()
   b = ax.bar(np.arange(len(metric_values)), metric_values, color=colors)
-  ax.bar_label(b, fmt='%.2f', label_type='center')
+  ax.bar_label(b, fmt='%.4f', label_type='center')
   ax.set_xticks(np.arange(len(metrics)), metrics, rotation='vertical')
+  if title is not None:
+      plt.title(title)
 
 def plot_metrics_per_metric(predicted_labels:dict, metric:str, save:bool=False, ax=None):
     colors = ['#334085','#286c8b','#1ba394','#17a88c','#0eda9b', '#68f0c0']
@@ -146,7 +155,7 @@ def plot_metrics_per_metric(predicted_labels:dict, metric:str, save:bool=False, 
     # plotting
     ax = ax or plt.gca()
     b = ax.bar(np.arange(len(models)), ave_metric_values, color=colors)
-    ax.bar_label(b, fmt='%.2f', label_type='center')
+    ax.bar_label(b, fmt='%.4f', label_type='center')
     ax.set_xticks(np.arange(len(models)), models)
     ax.set_ylabel(ylabel, fontsize=15)
     sns.despine()
