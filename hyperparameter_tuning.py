@@ -13,7 +13,8 @@ from sklearn.model_selection import RandomizedSearchCV
 
 # global controls
 save_figs = False
-tune_phca = False
+tune_clsf = True  # enable tuning of conventional classifiers
+tune_phca = True  # enable tuning of PHCA
 n_trials = 1
 n_folds = 5
 models = ['svm', 'rf', 'knn', 'lda', 'cart', 'phca']
@@ -40,6 +41,22 @@ best_score_balanced = {mod: [] for mod in models}
 best_params_imbalanced = {mod: [] for mod in models}
 best_score_imbalanced = {mod: [] for mod in models}
 
+# function to save best parameters and scores
+def dict_to_txt(dictionary, filename):
+    with open(filename, 'w') as file:
+        for key, value in dictionary.items():
+            file.write(f"{key}: {value}\n")
+
+def save_params_scores():
+    # updates 
+    global best_params_balanced, best_params_imbalanced, best_score_balanced, best_score_imbalanced
+
+    dict_to_txt(best_params_balanced, f"best_params_score/best_params_balanced_{n_trials}trials")
+    dict_to_txt(best_params_imbalanced, f"best_params_score/best_params_imbalanced_{n_trials}trials")
+    dict_to_txt(best_score_balanced, f"best_params_score/best_score_balanced_{n_trials}trials")
+    dict_to_txt(best_score_imbalanced, f"best_params_score/best_score_imbalanced_{n_trials}trials")
+
+
 def save_plot(model_base, model_tuned, model_name, X_test, y_test, metrics=metrics, save_figs=save_figs):
         fig = plt.figure(figsize=(11,5))
         plot_metrics(model_base.predict(X_test), y_test, metrics, ax=fig.add_subplot(1,2,1), title="Base")
@@ -47,6 +64,7 @@ def save_plot(model_base, model_tuned, model_name, X_test, y_test, metrics=metri
         plt.suptitle(model_name)
         if save_figs:
             plt.savefig(f'tuned_models/{model_name}.png')
+
 
 # ======================================= IMPLEMENTATION PROPER =================================
 
@@ -63,7 +81,7 @@ for i in range(n_trials):
     
     print('Images not converted into landmarks are removed. \n')
     # balanced dataset
-    X_bal, y_bal, paths_bal = prepared_data(FSL_dataset, balanced=True, random_state=21)  # random_state for choosing instances
+    X_bal, y_bal, paths_bal = prepared_data(FSL_dataset, balanced=True, random_state=random_states[i])  # random_state for choosing instances
     print(f"""Balanced dataset prepared.
         total num_instances                 : {X_bal.shape[0]}
         num_instances per class             : {X_bal.shape[0]/24:n}
@@ -109,37 +127,39 @@ for i in range(n_trials):
     cv = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=random_states[i])
 
     # tuning the conventional classifiers ----
-    for idx in range(len(estimators)):
-        classifier = models[idx]
-        print(f'{classifier} -----------')
+    if tune_clsf:
+        for idx in range(len(estimators)):
+            classifier = models[idx]
+            print(f'{classifier} -----------')
 
-        # balanced dataset
-        clsf_tuned = RandomizedSearchCV(estimator=estimators[idx],
-                            param_distributions=params[idx],
-                            n_iter=20,
-                            scoring=['accuracy'],
-                            refit='accuracy',
-                            cv=cv,
-                            verbose=1)
-        clsf_tuned.fit(X_train_bal, y_train_bal)
-        best_params_balanced[classifier].append(clsf_tuned.best_params_)
-        best_score_balanced[classifier].append(clsf_tuned.best_score_)
-        print(f'Optimal hyperparameters of {classifier} for Balanced dataset are {clsf_tuned.best_params_}')
-        print(f"Highest accuracy of optimal {classifier}: {clsf_tuned.best_score_} \n")
-        
-        # imbalanced dataset
-        clsf_tuned = RandomizedSearchCV(estimator=estimators[idx],
-                            param_distributions=params[idx],
-                            n_iter=20,
-                            scoring=['accuracy'],
-                            refit='accuracy',
-                            cv=cv,
-                            verbose=1)
-        clsf_tuned.fit(X_train_imb, y_train_imb)
-        best_params_imbalanced[classifier].append(clsf_tuned.best_params_)
-        best_score_imbalanced[classifier].append(clsf_tuned.best_score_)
-        print(f'Optimal hyperparameters of {classifier} for Imbalanced dataset are {clsf_tuned.best_params_}')
-        print(f"Highest accuracy of optimal {classifier}: {clsf_tuned.best_score_} \n")
+            # balanced dataset
+            clsf_tuned = RandomizedSearchCV(estimator=estimators[idx],
+                                param_distributions=params[idx],
+                                n_iter=20,
+                                scoring=['accuracy'],
+                                refit='accuracy',
+                                cv=cv,
+                                verbose=1)
+            clsf_tuned.fit(X_train_bal, y_train_bal)
+            best_params_balanced[classifier].append(clsf_tuned.best_params_)
+            best_score_balanced[classifier].append(clsf_tuned.best_score_)
+            print(f'Optimal hyperparameters of {classifier} for Balanced dataset are {clsf_tuned.best_params_}')
+            print(f"Highest accuracy of optimal {classifier}: {clsf_tuned.best_score_} \n")
+
+            # imbalanced dataset
+            clsf_tuned = RandomizedSearchCV(estimator=estimators[idx],
+                                param_distributions=params[idx],
+                                n_iter=20,
+                                scoring=['accuracy'],
+                                refit='accuracy',
+                                cv=cv,
+                                verbose=1)
+            clsf_tuned.fit(X_train_imb, y_train_imb)
+            best_params_imbalanced[classifier].append(clsf_tuned.best_params_)
+            best_score_imbalanced[classifier].append(clsf_tuned.best_score_)
+            print(f'Optimal hyperparameters of {classifier} for Imbalanced dataset are {clsf_tuned.best_params_}')
+            print(f"Highest accuracy of optimal {classifier}: {clsf_tuned.best_score_} \n")
+            save_params_scores()
 
     # tuning PHCA --------
     from sklearn.metrics import accuracy_score
@@ -156,7 +176,7 @@ for i in range(n_trials):
         print("Fitting 5 folds for each of 3 candidates, totalling 15 fits")
         phca_score = []
         for k in range(3):  # number of parameters of PHCA
-            phca_tuned = PHCA(dim=phca_params["dim"][i])
+            phca_tuned = PHCA(dim=phca_params["dim"][k])
             accuracy = 0
             for j in range(n_folds): # 5 fold CV
                 train_idx, val_idx = cv_splits_bal[j][0], cv_splits_bal[j][1]
@@ -174,7 +194,7 @@ for i in range(n_trials):
         print("Fitting 5 folds for each of 3 candidates, totalling 15 fits")
         phca_score = []
         for k in range(3):  # number of parameters of PHCA
-            phca_tuned = PHCA(dim=phca_params["dim"][i])
+            phca_tuned = PHCA(dim=phca_params["dim"][k])
             accuracy = 0
             for j in range(n_folds): # 5 fold CV
                 train_idx, val_idx = cv_splits_imb[j][0], cv_splits_imb[j][1]
@@ -187,6 +207,8 @@ for i in range(n_trials):
         best_score_imbalanced[classifier].append(max(phca_score))
         print(f'Optimal hyperparameters of {classifier} for Imbalanced dataset are dim: {phca_best_param}')
         print(f"Highest accuracy of optimal {classifier}: {max(phca_score)} \n")
+        save_params_scores()
+
     else:
         # from experimentations, maxdim=0 is always best parameter for PHCA
         phca_best_param = [0]
@@ -194,10 +216,11 @@ for i in range(n_trials):
         best_params_imbalanced[classifier].extend(phca_best_param)
 
         # balanced ---- obtaining (best) average accuracy/score
+        print("Fitting 5 folds for each of 3 candidates, totalling 15 fits")
         accuracy = 0
         for j in range(n_folds):
             train_idx, val_idx = cv_splits_bal[j][0], cv_splits_bal[j][1]
-            phca_tuned = PHCA(dim=phca_best_param[j])
+            phca_tuned = PHCA(dim=phca_best_param)
             phca_tuned.fit(X_train_bal[train_idx], y_train_bal[train_idx])
             accuracy += accuracy_score(y_train_bal[val_idx], phca_tuned.predict(X_train_bal[val_idx]))
         best_score_balanced[classifier].append(accuracy/n_folds)
@@ -205,24 +228,14 @@ for i in range(n_trials):
         print(f"Highest accuracy of optimal {classifier}: {accuracy/n_folds} \n")
 
         # imbalanced ---- obtaining (best) average accuracy/score
+        print("Fitting 5 folds for each of 3 candidates, totalling 15 fits")
         accuracy = 0
         for j in range(n_folds):
             train_idx, val_idx = cv_splits_bal[j][0], cv_splits_bal[j][1]
-            phca_tuned = PHCA(dim=phca_best_param[j])
+            phca_tuned = PHCA(dim=phca_best_param)
             phca_tuned.fit(X_train_imb[train_idx], y_train_imb[train_idx])
             accuracy += accuracy_score(y_train_imb[val_idx], phca_tuned.predict(X_train_imb[val_idx]))
         best_score_imbalanced[classifier].append(accuracy/n_folds)
         print(f'Optimal hyperparameters of {classifier} for Imbalanced dataset are dim: {phca_best_param}')
         print(f"Highest accuracy of optimal {classifier}: {accuracy/n_folds} \n")
-            
-
-# save best parameters as txt files
-def dict_to_txt(dictionary, filename):
-    with open(filename, 'w') as file:
-        for key, value in dictionary.items():
-            file.write(f"{key}: {value}\n")
-
-dict_to_txt(best_params_balanced, f"best_params_score/best_params_balanced_{n_trials}trials")
-dict_to_txt(best_params_imbalanced, f"best_params_score/best_params_imbalanced_{n_trials}trials")
-dict_to_txt(best_score_balanced, f"best_params_score/best_score_balanced_{n_trials}trials")
-dict_to_txt(best_score_imbalanced, f"best_params_score/best_score_imbalanced_{n_trials}trials")
+        save_params_scores()
