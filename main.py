@@ -1,20 +1,42 @@
-# Classification of Static FSL Alphabet using PHCA
+# Static FSL Alphabet Recognition using PHCA
+
+# classifiers are used with best tuned hyperparameters
+# classifiers are trained using train data
+# classifiers are evaluated using test data
+
+__author___ = "CBJetomo"
 
 import numpy as np
 from tqdm import tqdm
-from modules import FilipinoSignLanguage, Image2Landmarks, PHCA, kfoldDivideData, balance_data, plot_metrics_per_metric, compare_predictions
+import matplotlib.pyplot as plt
 
-# ------------ Parameters
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import SVC
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.tree import DecisionTreeClassifier
+
+from modules import FilipinoSignLanguage, Image2Landmarks, PHCA, prepared_data, compare_predictions
+
+# ------------ Global controls
+collect_data = False # True when landmarks data are still not extracted
+save_figs = True
+n_trials = 1
+
+# ------------ Global parameters
 classes = 24  # static
-zip_path = 'FSL_images_static.zip'
+models = ['svm', 'rf', 'knn', 'lda', 'cart', 'phca']
 metrics = ['precision', 'recall', 'f1-score', 'specificity', 'support', 'accuracy']
-collect_data = True  # True when landmarks data are still not extracted
-save_results = True
-
+zip_path = 'FSL_images_static.zip'
+random_states = [1, 12, 123, 1234, 12345]
 
 # ------------ Dataset Collection
 
-print('Collecting data ...')
+print('Collecting the dataset ...')
 if collect_data:
     ## Collecting Image Paths
     fsl_alphabet = FilipinoSignLanguage(zip_path, data_extension='jpg')
@@ -38,106 +60,126 @@ FSL_dataset = np.load(f'FSL_alphabet_landmarks_{classes}classes.npy', allow_pick
 num_data = len(FSL_dataset['target'])
 print(f'{num_data} data points collected. Each datapoint represents the MediaPipe landmarks of the hand.')
 
+predicted_labels_balanced = {mod: [] for mod in models+['true_labels']}
+predicted_labels_imbalanced = {mod: [] for mod in models+['true_labels']}
 
-# ------------ Data Preparation
+# obtain best hyperparameters
+def txt_to_dict(filename):
+    with open(filename, 'r') as file:
+        dictionary = {}
+        for line in file:
+            key, value = line.strip().split(': ', 1)
+            # Try to parse lists or numerical values
+            try:
+                value = eval(value)
+            except (NameError, SyntaxError):
+                pass  # Value remains a string if eval fails
+            dictionary[key] = value
+    return dictionary
 
-## balancing data (removing None values)
-X, y, FSL_path = balance_data(FSL_dataset)
-print(f'None landmarks values removed.')
-print(f'The data consists of {X.shape[0]} datapoints with {X.shape[1]} features each.')
-print(f'That is, we have {int(X.shape[0]/classes)} datapoints per class. \n')
+best_params_balanced = txt_to_dict(f"best_params_score/best_params_balanced.txt")
+best_params_imbalanced = txt_to_dict(f"best_params_score/best_params_imbalanced.txt")
 
-# ------------ Validation (5-fold cross validation)
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import RandomForestClassifier
-from sklearn import svm
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
-from sklearn.tree import DecisionTreeClassifier
+for i in range(n_trials):
+    print(f"Running Trial {i+1} ========================== \n")
 
+    # ------------ Data Preparation
 
-models = ['knn', 'rf', 'svm', 'lda', 'cart', 'phca', 'true_labels']
-predicted_labels = {mod: [] for mod in models}
+    print("Images not converted into landmarks are removed. \n")
 
-folds = 5
-fivefold_X, fivefold_y = kfoldDivideData(X, y, folds=folds)
-print('Starting five-fold cross validation --------------- \n')
-for val in range(folds):
-    print(f'Running validation {val} ... \n')
-
-    # Data Splitting
-    X_train, y_train, X_test, y_test = [], [], [], []
-    for j in range(folds):
-        if j == val:
-            X_test.extend(fivefold_X[j])
-            y_test.extend(fivefold_y[j])
-        else:
-            X_train.extend(fivefold_X[j])
-            y_train.extend(fivefold_y[j])
-
-    # Data Scaling
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-
-    # Classification
-    print('The models are learning from the data ...')
-
-    ## KNN
-    knn = KNeighborsClassifier()
-    knn.fit(X_train, y_train)
-
-    # RF
-    rf = RandomForestClassifier()
-    rf.fit(X_train, y_train)
-
-    # SVM
-    svm_model = svm.SVC(kernel='linear')
-    svm_model.fit(X_train, y_train)
-
-    # LDA
-    lda = LinearDiscriminantAnalysis()
-    lda.fit(X_train, y_train)
-
-    # CART
-    cart = DecisionTreeClassifier()
-    cart.fit(X_train, y_train)
+    # balanced dataset
+    X_bal, y_bal, paths_bal = prepared_data(FSL_dataset, balanced=True, random_state=random_states[i]) # randomly chooses instances
+    print(f"""Balanced dataset prepared.
+        total num_instances                 : {X_bal.shape[0]}
+        num_instances per class             : {X_bal.shape[0]/24:n}
+        num_features                        : {X_bal.shape[1]}""")
     
-    # PHCA
-    phca = PHCA(dim=0)
-    phca.fit(X_train, y_train)
+    # imbalanced dataset
+    X_imb, y_imb, paths_imb = prepared_data(FSL_dataset, balanced=False)
+    freqs = np.unique(y_imb, return_counts=True)[1]
+    print(f"""Imbalanced dataset prepared.
+        total num_instances                 : {X_imb.shape[0]}
+        minimum num_instances per class     : {min(freqs):n}
+        maximum num_instances per class     : {max(freqs):n}
+        average num_instances per class     : {np.mean(freqs):0.2f}
+        num_features                        : {X_imb.shape[1]} \n""")
+    
+    # splitting dataset (90:20 train-test ratio)
+    X_train_bal, X_test_bal, y_train_bal, y_test_bal = train_test_split(X_bal, y_bal, test_size=0.10, stratify=y_bal, random_state=random_states[i])
+    X_train_imb, X_test_imb, y_train_imb, y_test_imb = train_test_split(X_imb, y_imb, test_size=0.10, stratify=y_imb, random_state=random_states[i])
+    print("Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. \n")
 
-    print('The models are finished learning.')
-    print('The models are now predicting new data ...')
-    trained_models = [knn, rf, svm_model, lda, cart, phca]
-    predicted_labels['true_labels'].extend(y_test)
-    for idx, mod in enumerate(trained_models):
-        predicted_labels[models[idx]].extend(mod.predict(X_test))
-    print('The models are finished predicting. \n')
+    # scaling dataset
+    scaler = StandardScaler()
+    X_train_bal = scaler.fit_transform(X_train_bal)
+    X_test_bal = scaler.transform(X_test_bal)
 
-# save predictions
-np.save(f'predicted_labels_{classes}classes.npy', predicted_labels)
+    X_train_imb = scaler.fit_transform(X_train_imb)
+    X_test_imb = scaler.transform(X_test_imb)
+    print("Datasets are scaled using Standard Scaler. \n")
+    
+    # ------------- Classification of Test Set (using optimal hyperparameters)
+    print("Classifying test data using tuned classifiers ============= \n")
+
+    estimators = [SVC(), RandomForestClassifier(), KNeighborsClassifier(), LinearDiscriminantAnalysis(), DecisionTreeClassifier(), PHCA()]
+    params_bal = [best_params_balanced[mod][i] for mod in models]
+    params_imb = [best_params_imbalanced[mod][i] for mod in models]
+
+    for idx in range(len(estimators)):
+        classifier = models[idx]
+        print(f'{classifier} ---------------------')
+
+        # balanced dataset -----
+        # pass optimal hyperparameters to classifier
+        clsf_tuned = estimators[idx].set_params(**params_bal[idx])
+        
+        print("(1) learning from the Balanced dataset ...")
+        clsf_tuned.fit(X_train_bal, y_train_bal)  # training
+        print("(2) finished learning.")
+        print("(3) predicting new data ...")
+        predicted_labels_balanced[classifier].append(clsf_tuned.predict(X_test_bal))  # testing
+        print("(4) finished predicting the Balanced dataset. \n")
+
+        # imbalanced dataset -----
+        clsf_tuned = estimators[idx].set_params(**params_imb[idx])
+        
+        print("(1) learning from the Imbalanced dataset ...")
+        clsf_tuned.fit(X_train_imb, y_train_imb)  # training
+        print("(2) finished learning.")
+        print("(3) predicting new data ...")
+        predicted_labels_imbalanced[classifier].append(clsf_tuned.predict(X_test_imb))  # testing
+        print("(4) finished predicting the Imbalanced dataset. \n\n")
+        
+
+    # save correct classes
+    predicted_labels_balanced['true_labels'].append(y_test_bal)
+    predicted_labels_imbalanced['true_labels'].append(y_test_imb)
+
+    # save predictions
+    np.save(f'predicted_labels_balanced.npy', predicted_labels_balanced)
+    np.save(f'predicted_labels_imbalanced.npy', predicted_labels_imbalanced)
+
+    # Classification Report
+    print("Results for the Balanced Dataset =================")
+    for mod in models:
+        print(f'{mod} ---------------------')
+        print(classification_report(predicted_labels_balanced['true_labels'][i], predicted_labels_balanced[mod][i]))
+
+    print("Results for the Imbalanced Dataset =================")
+    for mod in models:
+        print(f'{mod} ---------------------')
+        print(classification_report(predicted_labels_imbalanced['true_labels'][i], predicted_labels_imbalanced[mod][i]))
+
 
 # save trained models
-import pickle
-for idx, mod in enumerate(trained_models):
-    pickle.dump(mod, open(f'trained_{models[idx]}_{classes}classes.sav', 'wb'))
-pickle.dump(scaler, open(f'trained_scaler_{classes}classes.sav', 'wb'))
+# import pickle
+# for idx, mod in enumerate(trained_models):
+#     pickle.dump(mod, open(f'trained_{models[idx]}x`_{classes}classes.sav', 'wb'))
+# pickle.dump(scaler, open(f'trained_scaler_{classes}classes.sav', 'wb'))
 
+# for met in metrics:
+#     if met != 'support':
+#         fig = plt.figure()
+#         plot_metrics_per_metric(predicted_labels, met, save=save_results)
 
-# ----------- Classification Report
-from sklearn.metrics import classification_report
-for mod in models:
-    if mod != 'true_labels':
-        print(f'{mod} ------------------')
-        print(classification_report(predicted_labels['true_labels'], predicted_labels[mod]))
-
-# Plotting
-import matplotlib.pyplot as plt
-
-for met in metrics:
-    if met != 'support':
-        fig = plt.figure()
-        plot_metrics_per_metric(predicted_labels, met, save=save_results)
-
-compare_predictions(predicted_labels, metrics)
+# compare_predictions(predicted_labels, metrics)
