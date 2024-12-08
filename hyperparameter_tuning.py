@@ -19,7 +19,7 @@ n_trials = 10
 n_folds = 5  # num of folds for CV
 models = ['svm', 'rf', 'knn', 'lda', 'cart', 'phca']
 metrics = ['precision', 'recall', 'f1-score', 'specificity', 'support', 'accuracy']
-random_states = np.arange(len(n_trials))+1  # length(random_states) = n_trials
+random_states = np.arange(n_trials)+1  # length(random_states) = n_trials
 
 # tuning parameters
 svm_params = {'C': stats.uniform(2**-3, 2**15), 
