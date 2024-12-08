@@ -25,14 +25,14 @@ from modules import FilipinoSignLanguage, Image2Landmarks, PHCA, prepared_data, 
 # ------------ Global controls
 collect_data = False # True when landmarks data are still not extracted
 save_figs = True
-n_trials = 1
+n_trials = 10
 
 # ------------ Global parameters
 classes = 24  # static
 models = ['svm', 'rf', 'knn', 'lda', 'cart', 'phca']
 metrics = ['precision', 'recall', 'f1-score', 'specificity', 'support', 'accuracy']
 zip_path = 'FSL_images_static.zip'
-random_states = [1, 12, 123, 1234, 12345]
+random_states = np.arange(n_trials)+1
 
 # ------------ Dataset Collection
 
