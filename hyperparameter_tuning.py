@@ -14,12 +14,12 @@ from sklearn.model_selection import RandomizedSearchCV
 # global controls
 save_figs = False
 tune_clsf = True  # enable tuning of conventional classifiers
-tune_phca = True  # enable tuning of PHCA
-n_trials = 1
-n_folds = 5
+tune_phca = False  # enable tuning of PHCA
+n_trials = 10
+n_folds = 5  # num of folds for CV
 models = ['svm', 'rf', 'knn', 'lda', 'cart', 'phca']
 metrics = ['precision', 'recall', 'f1-score', 'specificity', 'support', 'accuracy']
-random_states = [1, 12, 123, 1234, 12345]  # length(random_states) = n_trials
+random_states = np.arange(len(n_trials))+1  # length(random_states) = n_trials
 
 # tuning parameters
 svm_params = {'C': stats.uniform(2**-3, 2**15), 
@@ -48,13 +48,13 @@ def dict_to_txt(dictionary, filename):
             file.write(f"{key}: {value}\n")
 
 def save_params_scores():
-    # updates 
+    """Best parameters and scores updater. """
     global best_params_balanced, best_params_imbalanced, best_score_balanced, best_score_imbalanced
 
-    dict_to_txt(best_params_balanced, f"best_params_score/best_params_balanced_{n_trials}trials")
-    dict_to_txt(best_params_imbalanced, f"best_params_score/best_params_imbalanced_{n_trials}trials")
-    dict_to_txt(best_score_balanced, f"best_params_score/best_score_balanced_{n_trials}trials")
-    dict_to_txt(best_score_imbalanced, f"best_params_score/best_score_imbalanced_{n_trials}trials")
+    dict_to_txt(best_params_balanced, f"best_params_score/best_params_balanced.txt")
+    dict_to_txt(best_params_imbalanced, f"best_params_score/best_params_imbalanced.txt")
+    dict_to_txt(best_score_balanced, f"best_params_score/best_score_balanced.txt")
+    dict_to_txt(best_score_imbalanced, f"best_params_score/best_score_imbalanced.txt")
 
 
 def save_plot(model_base, model_tuned, model_name, X_test, y_test, metrics=metrics, save_figs=save_figs):
