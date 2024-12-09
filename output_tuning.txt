@@ -1,0 +1,725 @@
+Loading the dataset ...
+10800 data points collected. Each data point represents the MediaPipe landmarks of the hand. 
+
+Running Trial 1 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 21595.86361278647, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.995266272189349 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 1374.647176946848, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9963594994311717 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 218, 'min_samples_split': 3, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9445266272189349 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 311, 'min_samples_split': 6, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9342434584755404 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 33}
+Highest accuracy of optimal knn: 0.936094674556213 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 2}
+Highest accuracy of optimal knn: 0.9904436860068259 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.04478523521072142, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9241124260355029 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.008112942163678527, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9378839590443686 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 8, 'min_samples_leaf': 13, 'max_depth': 12}
+Highest accuracy of optimal cart: 0.9383136094674555 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 26, 'min_samples_leaf': 2, 'max_depth': 27}
+Highest accuracy of optimal cart: 0.9523321956769056 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Highest accuracy of optimal phca: 0.9914201183431952
+
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+Highest accuracy of optimal phca: 0.9915680473372781
+
+Running Trial 2 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 4648.6167848277255, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9942307692307691 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 15807.97218509133, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9959044368600682 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 124, 'min_samples_split': 3, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9408284023668638 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 325, 'min_samples_split': 8, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9321956769055746 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 54}
+Highest accuracy of optimal knn: 0.9019230769230768 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 23}
+Highest accuracy of optimal knn: 0.9660978384527873 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.03702367896318037, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9272189349112425 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.020751554983984843, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9352673492605232 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 8, 'min_samples_leaf': 6, 'max_depth': 27}
+Highest accuracy of optimal cart: 0.9495562130177515 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 54, 'min_samples_leaf': 3, 'max_depth': 20}
+Highest accuracy of optimal cart: 0.9386803185437997 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 3 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 5142.560160467372, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9942307692307691 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 4499.623269154887, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9947667804323095 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 268, 'min_samples_split': 8, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9408284023668638 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 219, 'min_samples_split': 8, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.930716723549488 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 55}
+Highest accuracy of optimal knn: 0.9005917159763314 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 13}
+Highest accuracy of optimal knn: 0.9775881683731512 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.12791427301173497, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.9038461538461539 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.07543014754642985, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9134243458475539 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 14, 'min_samples_leaf': 7, 'max_depth': 21}
+Highest accuracy of optimal cart: 0.9476331360946745 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 16, 'min_samples_leaf': 3, 'max_depth': 27}
+Highest accuracy of optimal cart: 0.9572241183162685 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 4 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 24326.357815470616, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9946745562130177 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 24483.43378829607, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9963594994311717 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 288, 'min_samples_split': 9, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9414201183431953 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 158, 'min_samples_split': 7, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.926962457337884 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 26}
+Highest accuracy of optimal knn: 0.9498520710059172 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 41}
+Highest accuracy of optimal knn: 0.9352673492605232 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.03780798474175584, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.9282544378698224 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.09767450719892634, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9088737201365188 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 28, 'min_samples_leaf': 1, 'max_depth': 12}
+Highest accuracy of optimal cart: 0.9460059171597633 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 35, 'min_samples_leaf': 17, 'max_depth': 15}
+Highest accuracy of optimal cart: 0.9294653014789533 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 5 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 10752.983406557818, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9960059171597633 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 10726.536847855157, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.99613196814562 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 186, 'min_samples_split': 4, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9390532544378697 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 229, 'min_samples_split': 2, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9327645051194539 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 15}
+Highest accuracy of optimal knn: 0.9671597633136095 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 52}
+Highest accuracy of optimal knn: 0.9187713310580203 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.03931429604608738, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.9210059171597633 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.08539099007543938, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9137656427758817 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 31, 'min_samples_leaf': 2, 'max_depth': 20}
+Highest accuracy of optimal cart: 0.9437869822485208 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 3, 'min_samples_leaf': 2, 'max_depth': 14}
+Highest accuracy of optimal cart: 0.9622298065984072 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 6 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 12549.000008968287, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9949704142011834 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 5797.496454233868, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9954493742889647 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 210, 'min_samples_split': 9, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9359467455621301 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 330, 'min_samples_split': 10, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9319681456200228 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 12}
+Highest accuracy of optimal knn: 0.9724852071005916 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 38}
+Highest accuracy of optimal knn: 0.9397042093287826 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.017066121999409045, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.926923076923077 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.12969578411685379, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.9048919226393629 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 14, 'min_samples_leaf': 1, 'max_depth': 21}
+Highest accuracy of optimal cart: 0.954585798816568 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 7, 'min_samples_leaf': 9, 'max_depth': 18}
+Highest accuracy of optimal cart: 0.9485779294653014 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 7 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 31706.717055837973, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9949704142011834 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 2168.5019794989566, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.995221843003413 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 307, 'min_samples_split': 5, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9415680473372781 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 350, 'min_samples_split': 6, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9291240045506257 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 33}
+Highest accuracy of optimal knn: 0.9353550295857989 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 18}
+Highest accuracy of optimal knn: 0.9729237770193402 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.02141195470753421, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9300295857988166 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.1718400439678155, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.899089874857793 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 44, 'min_samples_leaf': 8, 'max_depth': 26}
+Highest accuracy of optimal cart: 0.9359467455621301 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 4, 'min_samples_leaf': 10, 'max_depth': 20}
+Highest accuracy of optimal cart: 0.9488054607508533 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 8 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 191.29164748097173, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9945266272189348 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 8047.925682694626, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.995221843003413 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 214, 'min_samples_split': 5, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9372781065088758 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 252, 'min_samples_split': 7, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9277588168373152 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 62}
+Highest accuracy of optimal knn: 0.8849112426035501 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 1}
+Highest accuracy of optimal knn: 0.9941979522184301 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.013772757915985867, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9352071005917161 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.036618883142873204, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9266211604095563 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 2, 'min_samples_leaf': 1, 'max_depth': 13}
+Highest accuracy of optimal cart: 0.9618343195266272 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 25, 'min_samples_leaf': 4, 'max_depth': 28}
+Highest accuracy of optimal cart: 0.9509670079635949 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 9 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 12912.309299367651, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9942307692307691 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 15530.539994488125, 'gamma': 'scale', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9964732650739476 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 263, 'min_samples_split': 5, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9402366863905327 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 298, 'min_samples_split': 3, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9299203640500568 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 25}
+Highest accuracy of optimal knn: 0.9498520710059172 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 6}
+Highest accuracy of optimal knn: 0.9837315130830488 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.03430005080190668, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.9227810650887573 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.0031323060443076978, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.9455062571103527 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 20, 'min_samples_leaf': 1, 'max_depth': 22}
+Highest accuracy of optimal cart: 0.9502958579881657 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 21, 'min_samples_leaf': 9, 'max_depth': 18}
+Highest accuracy of optimal cart: 0.9482366325369739 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
+
+Running Trial 10 --------------------- 
+
+Images not converted into landmarks are removed. 
+
+Balanced dataset prepared.
+            total num_instances                 : 7512
+            num_instances per class             : 313
+            num_features                        : 63
+Imbalanced dataset prepared.
+            total num_instances                 : 9767
+            minimum num_instances per class     : 313
+            maximum num_instances per class     : 450
+            average num_instances per class     : 406.96
+            num_features                        : 63 
+
+Balanced and Imbalanced datasets are split into train (90%) and test (10%) sets, respectively. 
+
+Datasets are scaled using Standard Scaler. 
+
+Tuning hyper-parameters of classifiers using Random Search CV. 
+
+svm -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Balanced dataset are {'C': 31999.11819037696, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9945266272189348 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of svm for Imbalanced dataset are {'C': 26235.496115621172, 'gamma': 'auto', 'kernel': 'rbf'}
+Highest accuracy of optimal svm: 0.9956769055745165 
+
+rf -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Balanced dataset are {'n_estimators': 236, 'min_samples_split': 3, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9409763313609467 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of rf for Imbalanced dataset are {'n_estimators': 180, 'min_samples_split': 6, 'max_depth': 5}
+Highest accuracy of optimal rf: 0.9319681456200227 
+
+knn -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Balanced dataset are {'n_neighbors': 33}
+Highest accuracy of optimal knn: 0.9337278106508876 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of knn for Imbalanced dataset are {'n_neighbors': 8}
+Highest accuracy of optimal knn: 0.9824800910125141 
+
+lda -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Balanced dataset are {'shrinkage': 0.07937408388513723, 'solver': 'lsqr'}
+Highest accuracy of optimal lda: 0.9171597633136095 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of lda for Imbalanced dataset are {'shrinkage': 0.032386928050456176, 'solver': 'eigen'}
+Highest accuracy of optimal lda: 0.9283276450511945 
+
+cart -----------
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Balanced dataset are {'min_samples_split': 9, 'min_samples_leaf': 1, 'max_depth': 26}
+Highest accuracy of optimal cart: 0.9599112426035503 
+
+Fitting 5 folds for each of 20 candidates, totalling 100 fits
+Optimal hyperparameters of cart for Imbalanced dataset are {'min_samples_split': 19, 'min_samples_leaf': 6, 'max_depth': 19}
+Highest accuracy of optimal cart: 0.949829351535836 
+
+phca -----------
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Balanced dataset are dim: [0]
+Fitting 5 folds for each of 3 candidates, totalling 15 fits
+Optimal hyperparameters of phca for Imbalanced dataset are dim: [0]
