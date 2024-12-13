@@ -95,11 +95,12 @@ def get_specificity(confusionMatrix, classes):
         specificity[str(label)] = tn/(tn+fp)
     return specificity
 
-def classification_report_with_specificity(predicted_labels):
-    report = {key: classification_report(predicted_labels['true_labels'], predicted_labels[key], output_dict=True) for key in predicted_labels.keys() if key != 'true_labels'}
+def classification_report_with_specificity(predicted_labels:dict, idx:int):
+    """ Include specificity to classification report """
+    report = {key: classification_report(predicted_labels['true_labels'][idx], predicted_labels[key][idx], output_dict=True) for key in predicted_labels.keys() if key != 'true_labels'}
     for key in report.keys():
-        cf = confusion_matrix(predicted_labels['true_labels'], predicted_labels[key], labels=np.unique(predicted_labels['true_labels']))
-        specificity = get_specificity(cf, classes=np.unique(predicted_labels['true_labels']))
+        cf = confusion_matrix(predicted_labels['true_labels'][idx], predicted_labels[key][idx], labels=np.unique(predicted_labels['true_labels'][idx]))
+        specificity = get_specificity(cf, classes=np.unique(predicted_labels['true_labels'][idx]))
      
         avg = 0
         for label in specificity.keys():
@@ -110,57 +111,89 @@ def classification_report_with_specificity(predicted_labels):
     report[key]['weighted avg']['specificity'] = avg/len(specificity)
     return report
 
-def plot_metrics(predicted_labels, true_labels, measurements, ax=None, title=None):
-  colors = ['#3a2f6b','#36669c','#41a0ae','#3ec995','#77f07f']
-  report = classification_report(true_labels, predicted_labels, output_dict=True)
-  labels = np.unique(true_labels)
-  metric_values = []
-  metrics = measurements.copy()
-  metrics.remove('support')
-  specificity = get_specificity(confusion_matrix(true_labels, predicted_labels, labels=labels), labels)
-  for metric in metrics:
-    if metric == 'accuracy':
-      value = report[metric]
-    elif metric == 'specificity':
-      value = np.mean([specificity[clss] for clss in labels])
-    else:
-      value = np.mean([report[clss][metric] for clss in labels])
-    metric_values.append(value)
-
-  # plotting
-  ax = ax or plt.gca()
-  b = ax.bar(np.arange(len(metric_values)), metric_values, color=colors)
-  ax.bar_label(b, fmt='%.4f', label_type='center')
-  ax.set_xticks(np.arange(len(metrics)), metrics, rotation='vertical')
-  if title is not None:
-      plt.title(title)
-
-def plot_metrics_per_metric(predicted_labels:dict, metric:str, save:bool=False, ax=None):
-    colors = ['#334085','#286c8b','#1ba394','#17a88c','#0eda9b', '#68f0c0']
-    report = classification_report_with_specificity(predicted_labels)
-    models = [mod for mod in predicted_labels.keys() if mod != 'true_labels']  # extract models
-    labels = [lab for lab in report['phca'].keys() if len(lab) == 1]  # extract classes
+def plot_boxplots(predicted_labels:dict, metric:str, save_fig:bool=False, ax=None):
+    """
+    Plot boxplots for each `metric`
     
-    # extracting values
-    if metric == 'accuracy':
-        ave_metric_values = [report[mod]['accuracy'] for mod in models]
-        ylabel = 'overall ' + metric
-    else:
-        metric_values = []
-        for mod in models:
-            metric_values.append([report[mod][lab][metric] for lab in labels])
-        ave_metric_values = [np.mean(mv) for mv in metric_values]
-        ylabel = 'ave. ' + metric
+    ----------
+    :param: predicted_labels: dictionary with classifiers (keys) and obtained results per class (values)
+    :param: metric: single scoring metrics for comparison of classifiers `['precision', 'recall', 'f1-score', 'specificity', 'support', 'accuracy']`
+    :param: save: Boolean on whether to save plot or not
+    :param: ax: can be used to subplot result
+
+    :return: average score of `classifier` per `metric` across `n_trials`
+    """
+    # color per classifier
+    colors = ['#334085','#286c8b','#1ba394','#17a88c','#0eda9b', '#68f0c0']
+    models = [mod for mod in predicted_labels.keys() if mod != 'true_labels']  # extract models
+    labels = np.unique(predicted_labels['true_labels'])  # extract classes (labels)
+    n_trials = len(predicted_labels['true_labels'])
+
+    scores = []
+    for i in range(n_trials):
+        report = classification_report_with_specificity(predicted_labels, idx=i)
+        
+        # extracting values
+        if metric == 'accuracy':
+            ave_metric_values = [report[mod]['accuracy'] for mod in models]
+            ylabel = 'Overall ' + metric.capitalize()
+        else:
+            metric_values = []
+            for mod in models:
+                metric_values.append([report[mod][lab][metric] for lab in labels])
+            ave_metric_values = [np.mean(mv) for mv in metric_values]
+            ylabel = 'Average ' + metric.capitalize()
+        
+        scores.append(ave_metric_values)
+    scores = np.array(scores)
 
     # plotting
     ax = ax or plt.gca()
-    b = ax.bar(np.arange(len(models)), ave_metric_values, color=colors)
-    ax.bar_label(b, fmt='%.4f', label_type='center')
-    ax.set_xticks(np.arange(len(models)), models)
-    ax.set_ylabel(ylabel, fontsize=15)
+    bplot = ax.boxplot(scores, patch_artist=True)
+    for patch, color in zip(bplot['boxes'], colors):  # change color of bplots
+        patch.set_facecolor(color)
+
+    ax.set_xticklabels(models)
+    ax.set_ylabel(ylabel)
+    ax.set_xlabel("classifiers")
+    ax.grid(axis='y')
+
     sns.despine()
-    if save:
-        plt.savefig(f'result_{metric}.png')
+    if save_fig:
+        plt.savefig(f'figures/result_{metric}.png')
+    return scores
+
+def plot_bars(ave_scores:dict, metrics:list, save_fig:bool=False, ax=None):
+    """ 
+    Plot grouped bar graphs of average scores of classifers acc to all `metrics`
+    
+    -----------
+    :param: predicted_labels: dictionary with classifiers (keys) and obtained results per class (values)
+    :param: metrics: list of all metrics 
+    :param: save: Boolean on whether to save plot or not
+    :param: ax: can be used to subplot result
+    """
+    colors = ['#334085','#286c8b','#1ba394','#0eda9b', '#68f0c0']
+    models = ['svm', 'rf', 'knn', 'lda', 'cart', 'phca']
+    
+    width = 0.25
+    shift = -2 * width
+    x = np.arange(len(ave_scores['accuracy']))*1.5
+
+    ax = ax or plt.gca()
+    for met, col in zip(metrics, colors):
+        ax.bar(x+shift, ave_scores[met], width=width, color=col, label=met, edgecolor='k')
+        shift += width
+
+    ax.set_xticks(x, models)
+    ax.set_ylim(top=1.1)
+    ax.legend(loc='lower right')
+    ax.set_xlabel("Classifiers")
+    ax.set_ylabel("Average values")
+
+    sns.despine()
+    if save_fig:
+        plt.savefig(f'figures/result_bars.png')
 
 def plot_predictions(y_pred, y_test, test_ind, num_images, landmarks:bool, title, img_paths):
   if title == 'Correct':
