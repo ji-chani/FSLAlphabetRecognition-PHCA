@@ -1,13 +1,18 @@
 from sklearn.metrics import confusion_matrix, classification_report
 from sklearn.utils import shuffle
+
 import scikit_posthocs as sp
 from statsmodels.stats.contingency_tables import mcnemar
 from scipy import stats
+
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+from matplotlib.colors import ListedColormap
+import seaborn as sns
+
 import numpy as np
 import cv2
 import math
-import seaborn as sns
 
 from modules import Image2Landmarks
 
@@ -153,9 +158,10 @@ def plot_boxplots(predicted_labels:dict, metric:str, save_fig:bool=False, ax=Non
     for patch, color in zip(bplot['boxes'], colors):  # change color of bplots
         patch.set_facecolor(color)
 
+    # plot adjustments
     ax.set_xticklabels(models)
     ax.set_ylabel(ylabel)
-    ax.set_xlabel("classifiers")
+    ax.set_xlabel("Classifiers")
     ax.grid(axis='y')
 
     sns.despine()
@@ -170,21 +176,24 @@ def plot_bars(ave_scores:dict, metrics:list, save_fig:bool=False, ax=None):
     -----------
     :param: predicted_labels: dictionary with classifiers (keys) and obtained results per class (values)
     :param: metrics: list of all metrics 
-    :param: save: Boolean on whether to save plot or not
+    :param: save_fig: Boolean on whether to save plot or not
     :param: ax: can be used to subplot result
     """
     colors = ['#334085','#286c8b','#1ba394','#0eda9b', '#68f0c0']
     models = ['svm', 'rf', 'knn', 'lda', 'cart', 'phca']
     
+    # for grouping bars
     width = 0.25
     shift = -2 * width
     x = np.arange(len(ave_scores['accuracy']))*1.5
 
+    # bar graphs
     ax = ax or plt.gca()
     for met, col in zip(metrics, colors):
         ax.bar(x+shift, ave_scores[met], width=width, color=col, label=met, edgecolor='k')
         shift += width
 
+    # plot adjustments
     ax.set_xticks(x, models)
     ax.set_ylim(top=1.1)
     ax.legend(loc='lower right')
@@ -194,6 +203,52 @@ def plot_bars(ave_scores:dict, metrics:list, save_fig:bool=False, ax=None):
     sns.despine()
     if save_fig:
         plt.savefig(f'figures/result_bars.png')
+
+def plot_confusion_matrix(predicted_labels:dict, model:str, idx:int, with_colorbar:bool=False, save_fig:bool=False, title:str=None, ax=None):
+    """
+    Plot confusion matrix obtained by `model` in Trial `idx+1`
+
+    -----------
+    :param: predicted_labels: dictionary with classifiers (keys) and obtained results per class (values)
+    :param: model: model to be assessed
+    :param: idx: Trial idx
+    :param: save_fig: Boolean on whether to save plot or not
+    :param: ax: can be used to subplot result
+    """
+    
+    cf = confusion_matrix(predicted_labels['true_labels'][idx], predicted_labels[model][idx])
+    classes = np.unique(predicted_labels['true_labels'][0])
+
+    # color palette
+    cmp = mpl.colormaps['viridis']
+    cmp = ListedColormap(cmp(np.linspace(0.25, 0.75, 128)))
+    
+    # plot confusion matrix and colorbar
+    ax = ax or plt.gca()
+    im = ax.imshow(cf, cmap=cmp)
+    if with_colorbar:
+        plt.colorbar(im)
+
+    # change xticks to classes in the dataset
+    ax.set_xticks(np.arange(len(classes)), labels=classes)
+    ax.set_yticks(np.arange(len(classes)), labels=classes)
+
+    # x and y label, title
+    ax.set_ylabel("True Label")
+    ax.set_xlabel("Predicted Label")
+    ax.set_title(title, fontsize=13)
+
+    # create text annotations
+    for i in range(len(classes)):
+        for j in range(len(classes)):
+            text_color = 'w'
+            if i == j:
+                text_color = 'k'
+            if cf[i,j] != 0:
+                ax.text(j, i, cf[i,j], ha="center", va="center", color=text_color)
+
+    if save_fig:
+        plt.savefig(f'figures/result_confusion.png')
 
 def plot_predictions(y_pred, y_test, test_ind, num_images, landmarks:bool, title, img_paths):
   if title == 'Correct':
@@ -223,9 +278,9 @@ def plot_predictions(y_pred, y_test, test_ind, num_images, landmarks:bool, title
   plt.tight_layout()
   plt.show()
 
-def nemenyi_test(predicted_labels, metrics, alpha=0.05):
-    report = classification_report_with_specificity(predicted_labels)
-    label_list = np.unique(predicted_labels['true_labels'])
+def nemenyi_test(predicted_labels, idx, metrics, alpha=0.05):
+    report = classification_report_with_specificity(predicted_labels, idx)
+    label_list = np.unique(predicted_labels['true_labels'][idx])
     report_list = {}
     models = [mod for mod in report.keys() if mod != 'true_labels']
     for model in models:
@@ -238,10 +293,10 @@ def nemenyi_test(predicted_labels, metrics, alpha=0.05):
             else:
                 for label in label_list:
                     report_list[model].append(report[model][str(label)][met])
-    stat, pvalue = stats.friedmanchisquare(*[report_list[mod] for mod in models])
+    _, pvalue = stats.friedmanchisquare(*[report_list[mod] for mod in models])
     print(f'The p-value is: {pvalue}')
     if pvalue <= alpha:
-        print('At least one population mean differs from the others.')
+        print('At least one population mean differs from the others. \n')
     else:
         print('The mean value for each of the population is equal.')
     data = np.array([report_list[mod] for mod in models])
