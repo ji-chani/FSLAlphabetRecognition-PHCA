@@ -5,6 +5,7 @@ from mediapipe.tasks.python.vision import HandLandmarker, HandLandmarkerOptions
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import Literal
 
 VisionRunningMode = mp.tasks.vision.RunningMode
 
@@ -18,8 +19,10 @@ HAND_CONNECTIONS = frozenset([
 ])
 class Image2Landmarks:
     """ Converts images to landmarks"""
-    def __init__(self, model_path:str, flatten:bool=True, display_image:bool=False, display_landmarks:bool=False, save_figs:bool=False):
+    def __init__(self, model_path:str, landmark_type:Literal["normalized", "world"], flatten:bool=True, 
+                 display_image:bool=False, display_landmarks:bool=False, save_figs:bool=False):
         self.model_path = model_path
+        self.landmark_type = landmark_type  # hand_landmarks or hand_world_landmarks
         self.flatten = flatten
         self.display_image = display_image
         self.display_landmarks = display_landmarks
@@ -45,12 +48,15 @@ class Image2Landmarks:
         hand_landmarks = extract_landmarks(results, self.flatten)
         
         # for displaying images and landmarks
+        if self.landmark_type == "world":  # cannot plot hand_world_landmarks directly to image
+            return
+        
         annotated_image = draw_hand_landmarks(bgr_image, results)
-
+        
         if hand_landmarks is not None:
             connected_landmarks = connect_landmarks(hand_landmarks)
 
-            if self.display_image and self.display_landmarks:
+            if self.display_image and self.display_landmarks:  # side-by-side annotated iamge and 3d landmarks
                 fig = plt.figure(figsize=figure_size)
                 ax1 = fig.add_subplot(1,2,1)
                 ax1.imshow(cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB))
@@ -69,12 +75,12 @@ class Image2Landmarks:
                     plt.savefig("figures/hand_landmarks.png")
                 plt.show()
             
-            elif self.display_image and not self.display_landmarks:
+            elif self.display_image and not self.display_landmarks:  # annotated image only
                 plt.imshow(cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB))
                 plt.axis('off')
                 plt.show()
 
-            elif not self.display_image and self.display_landmarks:
+            elif not self.display_image and self.display_landmarks:  # 3d landmarks only
                 fig = plt.figure(figsize=figure_size)
                 ax = fig.add_subplot(projection='3d')
                 for points in connected_landmarks:
@@ -85,9 +91,9 @@ class Image2Landmarks:
                 plt.ylabel('y')
                 plt.tight_layout()
 
-                if self.save_figs:
-                    plt.savefig("figures/hand_landmarks.png")
-                plt.show()
+            if self.save_figs:
+                plt.savefig("figures/hand_landmarks.png")
+            plt.show()
 
 
 
@@ -96,21 +102,26 @@ def _to_mp_image(bgr_frame:np.ndarray) -> mp.Image:
     rgb_frame = cv2.cvtColor(bgr_frame, cv2.COLOR_BGR2RGB)
     return mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
 
-def extract_landmarks(results, flattened:bool) -> np.ndarray | None:
+def extract_landmarks(results, landmark_type:Literal["normalized", "world"], flattened:bool=True) -> np.ndarray | list | None:
+    if landmark_type == "world":
+        hand_landmarks = results.hand_world_landmarks
+    if landmark_type == "normalized":
+        hand_landmarks = results.hand_landmarks
+
     # results.hand_landmarks is a list of hands
-    if not results.hand_landmarks:
+    if not hand_landmarks:
         return None
     
-    if len(results.hand_landmarks) > 1:
+    if len(hand_landmarks) > 1:
         all_hands = []
-        for hand in results.hand_landmarks:
+        for hand in hand_landmarks:
             landmarks = np.array([[lm.x, lm.y, lm.z] for lm in hand])
             if flattened:
                 landmarks = landmarks.flatten()
             all_hands.append(landmarks)
         return all_hands
     else:
-        landmarks = np.array([[lm.x, lm.y, lm.z] for lm in results.hand_landmarks[0]])
+        landmarks = np.array([[lm.x, lm.y, lm.z] for lm in hand_landmarks[0]])
         return landmarks.flatten() if flattened else landmarks
     
 def draw_hand_landmarks(bgr_image:np.ndarray, results) -> np.ndarray:
