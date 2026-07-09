@@ -48,9 +48,6 @@ class Image2Landmarks:
         hand_landmarks = extract_landmarks(results, self.flatten)
         
         # for displaying images and landmarks
-        if self.landmark_type == "world":  # cannot plot hand_world_landmarks directly to image
-            return
-        
         annotated_image = draw_hand_landmarks(bgr_image, results)
         
         if hand_landmarks is not None:
