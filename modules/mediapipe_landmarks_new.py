@@ -45,7 +45,7 @@ class Image2Landmarks:
         rgb_image = _to_mp_image(bgr_image)
     
         results = self.landmarker.detect(rgb_image)
-        hand_landmarks = extract_landmarks(results, self.flatten)
+        hand_landmarks = extract_landmarks(results, self.landmark_type, self.flatten)
         
         # for displaying images and landmarks
         annotated_image = draw_hand_landmarks(bgr_image, results)
